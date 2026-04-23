@@ -1,51 +1,166 @@
 <!DOCTYPE html>
 <html lang="kk">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>БЖБ/ТЖБ тексеру</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bilim Space</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 </head>
 <body>
-    <div class="container">
-        <h1>БЖБ/ТЖБ тексеру жүйесі</h1>
-        <p>Оқушы жұмысын жүктеп, дұрыс жауаппен салыстырып тексеру</p>
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+  <div class="bg-orb orb-3"></div>
 
-        <form method="POST" enctype="multipart/form-data">
-            <label>Сурет жүктеу:</label>
-            <input type="file" name="image" required>
-
-            <label>Дұрыс жауап:</label>
-            <textarea name="answer_key" rows="8" required></textarea>
-
-            <label>Максималды ұпай:</label>
-            <input type="number" name="max_score" value="10" required>
-
-            <button type="submit">Тексеру</button>
-        </form>
-
-        {% if error %}
-            <div class="error">
-                <h3>Қате:</h3>
-                <p>{{ error }}</p>
-            </div>
-        {% endif %}
-
-        {% if student_text %}
-            <div class="box">
-                <h2>Танылған мәтін</h2>
-                <pre>{{ student_text }}</pre>
-            </div>
-        {% endif %}
-
-        {% if result %}
-            <div class="box">
-                <h2>Нәтиже</h2>
-                <p><strong>Ұпай:</strong> {{ result.score }}</p>
-                <p><strong>Қорытынды:</strong> {{ result.decision }}</p>
-                <p><strong>Кері байланыс:</strong> {{ result.feedback }}</p>
-            </div>
-        {% endif %}
+  <header class="header" id="top">
+    <div class="container nav">
+      <div class="logo">Bilim <span>Space</span></div>
+      <nav>
+        <a href="#categories">Қызметтер</a>
+        <a href="#about">Біз туралы</a>
+        <a href="#contact">Байланыс</a>
+      </nav>
     </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-text glass">
+          <p class="badge">Мұғалімдерге арналған заманауи платформа</p>
+          <h1>Білім беру процесін <span>жеңілдететін</span> әдемі цифрлық кеңістік</h1>
+          <p class="hero-desc">
+            БЖБ/ТЖБ тексеру, оқушыларға арналған бөлім, эссе құру және эссе тексеру
+            қызметтері бір сайттың ішінде ыңғайлы түрде жинақталған.
+          </p>
+          <div class="hero-buttons">
+            <a href="#categories" class="btn btn-primary">Бастау</a>
+            <a href="#contact" class="btn btn-secondary">Байланыс</a>
+          </div>
+        </div>
+
+        <div class="hero-card glass floating-card">
+          <div class="hero-card-top">
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+          </div>
+          <div class="mini-screen">
+            <div class="mini-box large">AI Education Platform</div>
+            <div class="mini-row">
+              <div class="mini-box">БЖБ/ТЖБ</div>
+              <div class="mini-box">Эссе</div>
+            </div>
+            <div class="mini-row">
+              <div class="mini-box">Оқушылар</div>
+              <div class="mini-box">Тексеру</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="stats">
+      <div class="container stats-grid">
+        <div class="stat glass">
+          <h3>4+</h3>
+          <p>Негізгі қызмет</p>
+        </div>
+        <div class="stat glass">
+          <h3>24/7</h3>
+          <p>Онлайн қолжетімді</p>
+        </div>
+        <div class="stat glass">
+          <h3>3D</h3>
+          <p>Заманауи визуал</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="categories" id="categories">
+      <div class="container">
+        <div class="section-head">
+          <p class="section-tag">Негізгі бөлімдер</p>
+          <h2>Өзіңізге керек категорияны таңдаңыз</h2>
+          <p>Төмендегі карточкалардың бірін басқанда тиісті бетке өтеді.</p>
+        </div>
+
+        <div class="cards-grid">
+          <a class="service-card glass tilt" href="/bjb-checker">
+            <div class="icon">📘</div>
+            <h3>БЖБ/ТЖБ тексеру</h3>
+            <p>Оқушы жұмысын жүктеп, дұрыс жауаппен салыстырып автоматты тексеру.</p>
+            <span>Өту →</span>
+          </a>
+
+          <a class="service-card glass tilt" href="/students">
+            <div class="icon">🎓</div>
+            <h3>Оқушыларға</h3>
+            <p>Оқушыларға арналған ыңғайлы оқу материалдары мен интерактив бөлім.</p>
+            <span>Өту →</span>
+          </a>
+
+          <a class="service-card glass tilt" href="/essay-create">
+            <div class="icon">✍️</div>
+            <h3>Эссе құру</h3>
+            <p>Тақырып бойынша құрылымды, әдемі және тез эссе дайындау бөлімі.</p>
+            <span>Өту →</span>
+          </a>
+
+          <a class="service-card glass tilt" href="/essay-check">
+            <div class="icon">📝</div>
+            <h3>Эссе тексеру</h3>
+            <p>Эссені критерий бойынша бағалау, қателерін көру және ұсыныс алу.</p>
+            <span>Өту →</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="about" id="about">
+      <div class="container about-grid">
+        <div class="about-text glass">
+          <p class="section-tag">Артықшылығы</p>
+          <h2>Қазіргі заман талабына сай интерфейс</h2>
+          <p>
+            Бұл дизайн мұғалімдерге түсінікті, эстетикалық әдемі және қолдануға оңай болу
+            үшін жасалған. Жұмсақ түстер, 3D эффект, glassmorphism және hover-анимациялар
+            сайтты заманауи көрсетеді.
+          </p>
+        </div>
+
+        <div class="about-panel glass">
+          <div class="panel-item">
+            <strong>Жылдам</strong>
+            <span>Бірнеше қызмет бір жерде</span>
+          </div>
+          <div class="panel-item">
+            <strong>Әдемі</strong>
+            <span>3D карточкалар мен жұмсақ анимация</span>
+          </div>
+          <div class="panel-item">
+            <strong>Ыңғайлы</strong>
+            <span>Мұғалімдер мен оқушыларға түсінікті құрылым</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer" id="contact">
+    <div class="container footer-box glass">
+      <div>
+        <h3>Байланыс</h3>
+        <p>Сайтты жасаған: <strong>Сіздің атыңыз</strong></p>
+        <p>Телефон: <a href="tel:+77000000000">+7 700 000 00 00</a></p>
+        <p>WhatsApp: <a href="https://wa.me/77000000000" target="_blank">Хабарласу</a></p>
+      </div>
+      <a href="#top" class="btn btn-primary small">Жоғары көтерілу</a>
+    </div>
+  </footer>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
