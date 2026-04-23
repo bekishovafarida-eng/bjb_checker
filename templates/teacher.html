@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <title>Мұғалім панелі</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='teacher.css') }}">
+<link rel="manifest" href="/static/manifest.json">
+<meta name="theme-color" content="#c8a27c">
+
+<link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Bilim Space">
 </head>
 <body>
     <nav>
@@ -36,5 +43,18 @@
 </div>
 {% endif %}
     </div>
+    <script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('/static/service-worker.js')
+      .then(function (registration) {
+        console.log('Service Worker тіркелді:', registration.scope);
+      })
+      .catch(function (error) {
+        console.log('Service Worker қатесі:', error);
+      });
+  });
+}
+</script>
 </body>
 </html>

@@ -8,6 +8,13 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="manifest" href="/static/manifest.json">
+<meta name="theme-color" content="#c8a27c">
+
+<link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Bilim Space">
 </head>
 <body>
     <nav>
@@ -78,6 +85,18 @@
     </main>
 
 <script src="{{ url_for('static', filename='script.js') }}"></script>
-
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('/static/service-worker.js')
+      .then(function (registration) {
+        console.log('Service Worker тіркелді:', registration.scope);
+      })
+      .catch(function (error) {
+        console.log('Service Worker қатесі:', error);
+      });
+  });
+}
+</script>
 </body>
 </html>

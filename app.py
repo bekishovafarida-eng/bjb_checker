@@ -187,6 +187,14 @@ def teacher():
             })
 
     return render_template("teacher.html", files=files)
+# ==== ТЕСТ ====
+@app.route("/test-create")
+def test_create():
+    return "<h1>Тест құру беті дайындалып жатыр</h1>"
+
+@app.route("/test-check")
+def test_check():
+    return "<h1>Тест тексеру беті дайындалып жатыр</h1>"
 
 # ===== UPLOAD ФАЙЛДАР =====
 @app.route("/uploads/<filename>")
