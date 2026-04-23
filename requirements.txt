@@ -1,0 +1,6 @@
+Flask
+google-cloud-vision
+google-genai
+python-dotenv
+python-docx
+gunicorn

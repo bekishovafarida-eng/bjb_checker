@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>БЖБ/ТЖБ тексеру</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>БЖБ/ТЖБ тексеру жүйесі</h1>
+        <p>Оқушы жұмысын жүктеп, дұрыс жауаппен салыстырып тексеру</p>
+
+        <form method="POST" enctype="multipart/form-data">
+            <label>Сурет жүктеу:</label>
+            <input type="file" name="image" required>
+
+            <label>Дұрыс жауап:</label>
+            <textarea name="answer_key" rows="8" required></textarea>
+
+            <label>Максималды ұпай:</label>
+            <input type="number" name="max_score" value="10" required>
+
+            <button type="submit">Тексеру</button>
+        </form>
+
+        {% if error %}
+            <div class="error">
+                <h3>Қате:</h3>
+                <p>{{ error }}</p>
+            </div>
+        {% endif %}
+
+        {% if student_text %}
+            <div class="box">
+                <h2>Танылған мәтін</h2>
+                <pre>{{ student_text }}</pre>
+            </div>
+        {% endif %}
+
+        {% if result %}
+            <div class="box">
+                <h2>Нәтиже</h2>
+                <p><strong>Ұпай:</strong> {{ result.score }}</p>
+                <p><strong>Қорытынды:</strong> {{ result.decision }}</p>
+                <p><strong>Кері байланыс:</strong> {{ result.feedback }}</p>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
