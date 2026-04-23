@@ -15,7 +15,7 @@ app = Flask(__name__)
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 # Google Vision JSON кілті
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "dogwood-terra-492109-p4-4aea15c16564.json"
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "")
 
 vision_client = vision.ImageAnnotatorClient()
 gemini_client = genai.Client(api_key=GEMINI_API_KEY)
@@ -101,4 +101,4 @@ def index():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
