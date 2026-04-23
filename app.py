@@ -4,23 +4,31 @@ from google import genai
 from dotenv import load_dotenv
 from docx import Document
 import os
-import io
 import json
 
+# ENV жүктеу
 load_dotenv()
 
 app = Flask(__name__)
 
-# API key
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+# ===== GOOGLE JSON (ENV арқылы) =====
+google_json = os.getenv("GOOGLE_CREDENTIALS_JSON")
 
-# Google Vision JSON кілті
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "")
+# файлға жазу
+with open("key.json", "w", encoding="utf-8") as f:
+    f.write(google_json)
+
+# жүйеге тіркеу
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "key.json"
+
+# ===== API =====
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 vision_client = vision.ImageAnnotatorClient()
 gemini_client = genai.Client(api_key=GEMINI_API_KEY)
 
 
+# ===== OCR =====
 def extract_text_from_image(image_file):
     content = image_file.read()
     image = vision.Image(content=content)
@@ -31,10 +39,11 @@ def extract_text_from_image(image_file):
     return "Мәтін табылмады"
 
 
+# ===== ТЕКСЕРУ =====
 def check_with_gemini(student_text, answer_key, max_score):
     prompt = f"""
 Сен мұғалімнің көмекшісі боласың.
-Оқушы жауабын дұрыс жауаппен салыстырып, алдын ала тексер.
+Оқушы жауабын дұрыс жауаппен салыстырып, тексер.
 
 ДҰРЫС ЖАУАП:
 {answer_key}
@@ -44,11 +53,11 @@ def check_with_gemini(student_text, answer_key, max_score):
 
 Максималды ұпай: {max_score}
 
-Жауапты тек мына JSON форматында қайтар:
+Тек JSON формат:
 {{
   "score": сан,
   "decision": "Дұрыс/Жартылай дұрыс/Қате",
-  "feedback": "Қысқаша қазақша кері байланыс"
+  "feedback": "Қысқаша пікір"
 }}
 """
 
@@ -63,14 +72,15 @@ def check_with_gemini(student_text, answer_key, max_score):
     return json.loads(text)
 
 
+# ===== WORD ФАЙЛ =====
 def save_to_word(student_text, result, max_score):
     doc = Document()
-    doc.add_heading("БЖБ/ТЖБ тексеру нәтижесі", 0)
+    doc.add_heading("БЖБ/ТЖБ тексеру", 0)
 
-    doc.add_heading("Танылған мәтін", level=1)
+    doc.add_heading("Мәтін", level=1)
     doc.add_paragraph(student_text)
 
-    doc.add_heading("Тексеру нәтижесі", level=1)
+    doc.add_heading("Нәтиже", level=1)
     doc.add_paragraph(f"Ұпай: {result['score']} / {max_score}")
     doc.add_paragraph(f"Қорытынды: {result['decision']}")
     doc.add_paragraph(f"Кері байланыс: {result['feedback']}")
@@ -78,6 +88,7 @@ def save_to_word(student_text, result, max_score):
     doc.save("result.docx")
 
 
+# ===== WEB =====
 @app.route("/", methods=["GET", "POST"])
 def index():
     result = None
@@ -100,5 +111,6 @@ def index():
     return render_template("index.html", result=result, student_text=student_text, error=error)
 
 
+# ===== RUN =====
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
