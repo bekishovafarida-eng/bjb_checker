@@ -1,0 +1,29 @@
+.teacher-img {
+    max-width: 250px;
+    height: auto;
+    border-radius: 10px;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.work-card {
+    background: #fff;
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+.download-btn {
+    display: inline-block;
+    margin-top: 12px;
+    padding: 10px 16px;
+    background: #8b5a35;
+    color: white;
+    text-decoration: none;
+    border-radius: 10px;
+    font-weight: 700;
+    transition: 0.3s ease;
+}
+
+.download-btn:hover {
+    background: #6f4528;
+}

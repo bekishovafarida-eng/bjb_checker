@@ -2,27 +2,39 @@
 <html lang="kk">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Мұғалім панелі</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='teacher.css') }}">
 </head>
 <body>
     <nav>
-    <a href="{{ url_for('home') }}">Басты бет</a>
-    <a href="{{ url_for('bjb') }}">БЖБ</a>
-    <a href="{{ url_for('students') }}">Оқушылар</a>
-    <a href="{{ url_for('teacher') }}">Мұғалім</a>
-</nav>
-    <div class="container">
-        <h1>Мұғалім панелі</h1>
-        <p>Жіберілген жұмыстар</p>
+        <a href="{{ url_for('home') }}">Басты бет</a>
+        <a href="{{ url_for('bjb') }}">БЖБ</a>
+        <a href="{{ url_for('students') }}">Оқушылар</a>
+        <a href="{{ url_for('teacher') }}">Мұғалім</a>
+    </nav>
 
-        {% for file in files %}
-        <div class="card">
-           <img src="{{ url_for('uploaded_file', filename=file.filename) }}" alt="Жүктелген сурет">
-            <pre>{{ file.info }}</pre>
-        </div>
-        {% endfor %}
+    <div class="teacher-page">
+        <h1 class="teacher-title">Мұғалім панелі</h1>
+        <p class="teacher-subtitle">Жіберілген жұмыстар</p>
+
+       {% if files %}
+<div class="teacher-grid">
+    {% for file in files %}
+    <div class="work-card">
+        <img src="{{ url_for('uploaded_file', filename=file.filename) }}" alt="Оқушы жұмысы" class="teacher-img">
+        <div class="work-info">{{ file.info }}</div>
+
+        <a href="{{ url_for('uploaded_file', filename=file.filename) }}" download class="download-btn">
+            📥 Жүктеу
+        </a>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-box">
+    Әзірге жіберілген жұмыс жоқ.
+</div>
+{% endif %}
     </div>
 </body>
 </html>

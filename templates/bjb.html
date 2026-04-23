@@ -19,11 +19,11 @@
       <p class="subtitle">Оқушы жұмысын жүктеп, автоматты тексеру</p>
 
       <form action="{{ url_for('bjb') }}" method="POST" enctype="multipart/form-data">
-        <input type="file" name="image" required>
-        <textarea name="answer_key" placeholder="Дұрыс жауап" required></textarea>
-        <input type="number" name="max_score" placeholder="Максималды ұпай" required>
-        <button type="submit">Тексеру</button>
-      </form>
+    <input type="file" name="images" multiple required>
+    <textarea name="answer_key" placeholder="Дұрыс жауап" required></textarea>
+    <input type="number" name="max_score" placeholder="Максималды ұпай" required>
+    <button type="submit">Тексеру</button>
+</form>
 
       {% if student_text %}
       <div class="recognized-box">

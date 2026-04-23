@@ -106,11 +106,19 @@ def bjb():
 
     if request.method == "POST":
         try:
-            image = request.files["image"]
+            images = request.files.getlist("images")
             answer_key = request.form["answer_key"]
             max_score = request.form["max_score"]
 
-            student_text = extract_text_from_image(image)
+            all_texts = []
+
+            for image in images:
+                if image and image.filename:
+                    text = extract_text_from_image(image)
+                    all_texts.append(text)
+
+            student_text = "\n\n----- КЕЛЕСІ БЕТ -----\n\n".join(all_texts)
+
             result = check_with_gemini(student_text, answer_key, max_score)
             save_to_word(student_text, result, max_score)
 
@@ -134,14 +142,19 @@ def students():
             name = request.form["student_name"]
             cls = request.form["class_name"]
             work = request.form["work_type"]
-            image = request.files["image"]
+            images = request.files.getlist("images")
 
-            filename = secure_filename(image.filename)
-            filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
-            image.save(filepath)
+            saved_files = []
 
-            with open(filepath + ".txt", "w", encoding="utf-8") as f:
-                f.write(f"{name} | {cls} | {work}")
+            for image in images:
+                if image and image.filename:
+                    filename = secure_filename(image.filename)
+                    filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+                    image.save(filepath)
+                    saved_files.append(filename)
+
+                    with open(filepath + ".txt", "w", encoding="utf-8") as f:
+                        f.write(f"{name} | {cls} | {work}")
 
             return redirect(url_for("success"))
 
@@ -149,7 +162,6 @@ def students():
             error = str(e)
 
     return render_template("students.html", error=error)
-
 # ===== SUCCESS =====
 @app.route("/success")
 def success():
