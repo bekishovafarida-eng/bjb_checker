@@ -102,6 +102,7 @@ def bjb():
     result = None
     student_text = ""
     error = ""
+    max_score = ""
 
     if request.method == "POST":
         try:
@@ -120,9 +121,9 @@ def bjb():
         "bjb.html",
         result=result,
         student_text=student_text,
-        error=error
+        error=error,
+        max_score=max_score
     )
-
 # ===== ОҚУШЫЛАР =====
 @app.route("/students", methods=["GET", "POST"])
 def students():

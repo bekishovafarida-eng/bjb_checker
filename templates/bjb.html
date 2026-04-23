@@ -20,22 +20,29 @@
 
       <form action="{{ url_for('bjb') }}" method="POST" enctype="multipart/form-data">
         <input type="file" name="image" required>
-        <textarea name="answer_key" placeholder="Дұрыс жауап"></textarea>
+        <textarea name="answer_key" placeholder="Дұрыс жауап" required></textarea>
         <input type="number" name="max_score" placeholder="Максималды ұпай" required>
         <button type="submit">Тексеру</button>
       </form>
 
+      {% if student_text %}
+      <div class="recognized-box">
+        <h2>Танылған мәтін</h2>
+        <pre>{{ student_text }}</pre>
+      </div>
+      {% endif %}
+
       {% if result %}
-      <div class="result">
-        <h2>📊 Нәтиже</h2>
+      <div class="result-box">
+        <h2>Нәтиже</h2>
         <p><strong>Ұпай:</strong> {{ result.score }}</p>
         <p><strong>Қорытынды:</strong> {{ result.decision }}</p>
-        <p><strong>Пікір:</strong> {{ result.feedback }}</p>
+        <p><strong>Кері байланыс:</strong> {{ result.feedback }}</p>
       </div>
       {% endif %}
 
       {% if error %}
-      <div class="result">
+      <div class="error-box">
         <h2>Қате</h2>
         <p>{{ error }}</p>
       </div>
