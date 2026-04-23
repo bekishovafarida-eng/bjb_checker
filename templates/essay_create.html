@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <title>Эссе құру</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='essay.css') }}">
+    <link rel="manifest" href="/static/manifest.json">
+<meta name="theme-color" content="#c8a27c">
+
+<link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Bilim Space">
+</head>
+<body>
+    <nav>
+        <a href="{{ url_for('home') }}">Басты бет</a>
+        <a href="{{ url_for('bjb') }}">БЖБ</a>
+        <a href="{{ url_for('students') }}">Оқушылар</a>
+        <a href="{{ url_for('teacher') }}">Мұғалім</a>
+    </nav>
+
+    <div class="essay-page">
+        <div class="essay-card">
+            <h1>✍️ Эссе құру</h1>
+            <p class="subtitle">Тақырып, сынып және сөз саны бойынша автоматты эссе жасау</p>
+
+            <form method="POST">
+                <input type="text" name="topic" placeholder="Эссе тақырыбы" required>
+                <input type="text" name="grade_level" placeholder="Сынып (мысалы: 9-сынып)" required>
+                <input type="number" name="word_count" placeholder="Сөз саны" required>
+                <button type="submit">Эссе құру</button>
+            </form>
+
+            {% if essay_result %}
+            <div class="result-box">
+                <h2>{{ essay_result.title }}</h2>
+                <p><strong>Шамамен сөз саны:</strong> {{ essay_result.estimated_word_count }}</p>
+
+                <div class="essay-block">
+                    <h3>Дайын эссе</h3>
+                    <pre>{{ essay_result.essay }}</pre>
+                </div>
+
+                <div class="essay-block">
+                    <h3>Кіріспе</h3>
+                    <p>{{ essay_result.intro }}</p>
+                </div>
+
+                <div class="essay-block">
+                    <h3>Негізгі бөлім</h3>
+                    <p>{{ essay_result.main }}</p>
+                </div>
+
+                <div class="essay-block">
+                    <h3>Қорытынды</h3>
+                    <p>{{ essay_result.conclusion }}</p>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if error %}
+            <div class="error-box">
+                <h2>Қате</h2>
+                <p>{{ error }}</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

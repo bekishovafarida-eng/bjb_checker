@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <title>Эссе тексеру</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='essay.css') }}">
+    <link rel="manifest" href="/static/manifest.json">
+<meta name="theme-color" content="#c8a27c">
+
+<link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Bilim Space">
+</head>
+<body>
+    <nav>
+        <a href="{{ url_for('home') }}">Басты бет</a>
+        <a href="{{ url_for('bjb') }}">БЖБ</a>
+        <a href="{{ url_for('students') }}">Оқушылар</a>
+        <a href="{{ url_for('teacher') }}">Мұғалім</a>
+    </nav>
+
+    <div class="essay-page">
+        <div class="essay-card">
+            <h1>📝 Эссе тексеру</h1>
+            <p class="subtitle">Оқушы эссесінің суретін жүктеп, мәтінді шығару және қателерін талдау</p>
+
+            <form method="POST" enctype="multipart/form-data">
+                <input type="file" name="image" required>
+                <input type="text" name="topic" placeholder="Эссе тақырыбы (міндетті емес)">
+                <input type="text" name="grade_level" placeholder="Сынып (міндетті емес)">
+                <input type="number" name="word_count" placeholder="Күтілетін сөз саны (міндетті емес)">
+                <button type="submit">Эссені тексеру</button>
+            </form>
+
+            {% if essay_check_result %}
+            <div class="result-box">
+                <div class="essay-block">
+                    <h3>Танылған мәтін</h3>
+                    <pre>{{ essay_check_result.recognized_text }}</pre>
+                </div>
+
+                <div class="essay-block">
+                    <p><strong>Шамамен сөз саны:</strong> {{ essay_check_result.estimated_word_count }}</p>
+                    <p><strong>Тақырыпқа сәйкестігі:</strong> {{ essay_check_result.topic_match }}</p>
+                </div>
+
+                <div class="essay-block">
+                    <h3>Қарапайым қателер</h3>
+                    <ul>
+                        {% for item in essay_check_result.mistakes %}
+                        <li>{{ item }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <div class="essay-block">
+                    <h3>Жақсы тұстары</h3>
+                    <ul>
+                        {% for item in essay_check_result.strengths %}
+                        <li>{{ item }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <div class="essay-block">
+                    <h3>Жалпы пікір</h3>
+                    <p>{{ essay_check_result.feedback }}</p>
+                </div>
+
+                <div class="essay-block">
+                    <h3>Түзетілген нұсқа</h3>
+                    <pre>{{ essay_check_result.corrected_version }}</pre>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if error %}
+            <div class="error-box">
+                <h2>Қате</h2>
+                <p>{{ error }}</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

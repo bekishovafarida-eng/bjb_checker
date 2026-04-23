@@ -6,12 +6,13 @@ from docx import Document
 from werkzeug.utils import secure_filename
 import os
 import json
+import re
 
 load_dotenv()
 
 app = Flask(__name__)
 
-# ===== ПАПКА =====
+# ===== ПАПКАЛАР =====
 UPLOAD_FOLDER = "uploads"
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
@@ -35,6 +36,19 @@ if not GEMINI_API_KEY:
 vision_client = vision.ImageAnnotatorClient()
 gemini_client = genai.Client(api_key=GEMINI_API_KEY)
 
+# ===== JSON PARSER =====
+def parse_json_response(text):
+    text = text.strip()
+    text = text.replace("```json", "").replace("```", "").strip()
+
+    try:
+        return json.loads(text)
+    except Exception:
+        match = re.search(r"\{.*\}", text, re.DOTALL)
+        if match:
+            return json.loads(match.group(0))
+        raise ValueError("JSON оқу кезінде қате шықты")
+
 # ===== OCR =====
 def extract_text_from_image(image_file):
     content = image_file.read()
@@ -45,7 +59,7 @@ def extract_text_from_image(image_file):
         return response.full_text_annotation.text
     return "Мәтін табылмады"
 
-# ===== ТЕКСЕРУ =====
+# ===== БЖБ ТЕКСЕРУ =====
 def check_with_gemini(student_text, answer_key, max_score):
     prompt = f"""
 Сен мұғалімнің көмекшісі боласың.
@@ -66,15 +80,89 @@ def check_with_gemini(student_text, answer_key, max_score):
   "feedback": "Қысқаша қазақша пікір"
 }}
 """
-
     response = gemini_client.models.generate_content(
         model="gemini-2.5-flash",
         contents=prompt
     )
+    return parse_json_response(response.text)
 
-    text = response.text.strip()
-    text = text.replace("```json", "").replace("```", "").strip()
-    return json.loads(text)
+# ===== ЭССЕ ҚҰРУ =====
+def generate_essay(topic, grade_level, word_count):
+    prompt = f"""
+Сен қазақ тілінде эссе жазуға көмектесетін көмекшісің.
+
+Мына параметрлер бойынша толық дайын эссе жаз:
+Тақырып: {topic}
+Сынып: {grade_level}
+Сөз саны: шамамен {word_count} сөз
+
+Талаптар:
+1. Эссе қазақ тілінде болсын.
+2. Құрылымы анық болсын: кіріспе, негізгі бөлім, қорытынды.
+3. Оқушы тіліне жақын, түсінікті болсын.
+4. Өте күрделі емес, мектепке сай болсын.
+5. Сөз саны шамамен көрсетілген мөлшерге жақын болсын.
+
+Жауапты тек мына JSON форматында қайтар:
+{{
+  "title": "Эссе тақырыбы",
+  "essay": "Толық эссе мәтіні",
+  "intro": "Кіріспе қысқаша",
+  "main": "Негізгі бөлім қысқаша",
+  "conclusion": "Қорытынды қысқаша",
+  "estimated_word_count": сан
+}}
+"""
+    response = gemini_client.models.generate_content(
+        model="gemini-2.5-flash",
+        contents=prompt
+    )
+    return parse_json_response(response.text)
+
+# ===== ЭССЕ ТЕКСЕРУ =====
+def check_essay_with_gemini(recognized_text, topic="", grade_level="", word_count=""):
+    prompt = f"""
+Сен эссе тексеретін мұғалім көмекшісісің.
+
+OCR арқылы танылған эссе мәтіні төменде берілген. 
+Сен:
+1. Мәтінді оқып шық.
+2. Қарапайым грамматикалық және орфографиялық қателерді тап.
+3. Тақырыпқа сәйкестігін қысқаша бағала.
+4. Сөз санына жуық бағалау бер.
+5. Жалпы кері байланыс жаз.
+
+Қосымша мәлімет:
+Тақырып: {topic}
+Сынып: {grade_level}
+Күтілетін сөз саны: {word_count}
+
+ТАНЫЛҒАН МӘТІН:
+{recognized_text}
+
+Жауапты тек JSON форматында қайтар:
+{{
+  "recognized_text": "OCR арқылы шыққан мәтін",
+  "estimated_word_count": сан,
+  "topic_match": "Сәйкес/Жартылай сәйкес/Сәйкес емес",
+  "mistakes": [
+    "1-қате",
+    "2-қате",
+    "3-қате"
+  ],
+  "strengths": [
+    "1-артықшылық",
+    "2-артықшылық"
+  ],
+  "feedback": "Қысқаша жалпы пікір",
+  "corrected_version": "Мүмкін болса, түзетілген қысқа нұсқа"
+}}
+"""
+    response = gemini_client.models.generate_content(
+        model="gemini-2.5-flash",
+        contents=prompt
+    )
+    return parse_json_response(response.text)
 
 # ===== WORD =====
 def save_to_word(student_text, result, max_score):
@@ -96,7 +184,7 @@ def save_to_word(student_text, result, max_score):
 def home():
     return render_template("index.html")
 
-# ===== БЖБ ТЕКСЕРУ =====
+# ===== БЖБ =====
 @app.route("/bjb-checker", methods=["GET", "POST"])
 def bjb():
     result = None
@@ -118,7 +206,6 @@ def bjb():
                     all_texts.append(text)
 
             student_text = "\n\n----- КЕЛЕСІ БЕТ -----\n\n".join(all_texts)
-
             result = check_with_gemini(student_text, answer_key, max_score)
             save_to_word(student_text, result, max_score)
 
@@ -132,6 +219,7 @@ def bjb():
         error=error,
         max_score=max_score
     )
+
 # ===== ОҚУШЫЛАР =====
 @app.route("/students", methods=["GET", "POST"])
 def students():
@@ -144,14 +232,11 @@ def students():
             work = request.form["work_type"]
             images = request.files.getlist("images")
 
-            saved_files = []
-
             for image in images:
                 if image and image.filename:
                     filename = secure_filename(image.filename)
                     filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
                     image.save(filepath)
-                    saved_files.append(filename)
 
                     with open(filepath + ".txt", "w", encoding="utf-8") as f:
                         f.write(f"{name} | {cls} | {work}")
@@ -162,6 +247,7 @@ def students():
             error = str(e)
 
     return render_template("students.html", error=error)
+
 # ===== SUCCESS =====
 @app.route("/success")
 def success():
@@ -187,19 +273,55 @@ def teacher():
             })
 
     return render_template("teacher.html", files=files)
-# ==== ТЕСТ ====
-@app.route("/test-create")
-def test_create():
-    return "<h1>Тест құру беті дайындалып жатыр</h1>"
 
-@app.route("/test-check")
-def test_check():
-    return "<h1>Тест тексеру беті дайындалып жатыр</h1>"
-
-# ===== UPLOAD ФАЙЛДАР =====
 @app.route("/uploads/<filename>")
 def uploaded_file(filename):
     return send_from_directory(UPLOAD_FOLDER, filename)
+
+# ===== ЭССЕ ҚҰРУ БЕТІ =====
+@app.route("/essay-create", methods=["GET", "POST"])
+def essay_create():
+    essay_result = None
+    error = ""
+
+    if request.method == "POST":
+        try:
+            topic = request.form["topic"]
+            grade_level = request.form["grade_level"]
+            word_count = request.form["word_count"]
+
+            essay_result = generate_essay(topic, grade_level, word_count)
+
+        except Exception as e:
+            error = str(e)
+
+    return render_template("essay_create.html", essay_result=essay_result, error=error)
+
+# ===== ЭССЕ ТЕКСЕРУ БЕТІ =====
+@app.route("/essay-check", methods=["GET", "POST"])
+def essay_check():
+    essay_check_result = None
+    error = ""
+
+    if request.method == "POST":
+        try:
+            image = request.files["image"]
+            topic = request.form.get("topic", "")
+            grade_level = request.form.get("grade_level", "")
+            word_count = request.form.get("word_count", "")
+
+            recognized_text = extract_text_from_image(image)
+            essay_check_result = check_essay_with_gemini(
+                recognized_text,
+                topic=topic,
+                grade_level=grade_level,
+                word_count=word_count
+            )
+
+        except Exception as e:
+            error = str(e)
+
+    return render_template("essay_check.html", essay_check_result=essay_check_result, error=error)
 
 # ===== RUN =====
 if __name__ == "__main__":

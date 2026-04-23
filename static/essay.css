@@ -1,0 +1,139 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #efe3d8;
+    color: #3b2417;
+}
+
+nav {
+    background: #ffffff;
+    padding: 16px 28px;
+    display: flex;
+    gap: 28px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+nav a {
+    text-decoration: none;
+    color: #7a4b2f;
+    font-weight: 700;
+    font-size: 18px;
+}
+
+nav a:hover {
+    color: #5c3722;
+}
+
+.essay-page {
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 0 20px 40px;
+}
+
+.essay-card {
+    background: #f8f3ef;
+    border-radius: 24px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+.essay-card h1 {
+    margin-top: 0;
+    color: #4b2d1f;
+    font-size: 42px;
+}
+
+.subtitle {
+    font-size: 20px;
+    color: #7f624f;
+    margin-bottom: 24px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+form input,
+form button {
+    padding: 15px 16px;
+    border-radius: 14px;
+    border: 1px solid #ddd;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+form button {
+    background: #8b5a35;
+    color: white;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+form button:hover {
+    background: #6f4528;
+}
+
+.result-box,
+.error-box {
+    margin-top: 28px;
+    background: #f4efea;
+    border-left: 5px solid #8b5a35;
+    padding: 20px;
+    border-radius: 14px;
+}
+
+.essay-block {
+    margin-top: 20px;
+    background: white;
+    border-radius: 14px;
+    padding: 18px;
+}
+
+.essay-block h3 {
+    margin-top: 0;
+    color: #5c3722;
+}
+
+pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    font-size: 15px;
+}
+
+ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+li {
+    margin-bottom: 8px;
+}
+
+@media (max-width: 768px) {
+    nav {
+        flex-wrap: wrap;
+        gap: 14px;
+        padding: 14px 16px;
+    }
+
+    nav a {
+        font-size: 16px;
+    }
+
+    .essay-card {
+        padding: 20px;
+    }
+
+    .essay-card h1 {
+        font-size: 32px;
+    }
+
+    .subtitle {
+        font-size: 17px;
+    }
+}
