@@ -1,32 +1,39 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for, send_from_directory
 from google.cloud import vision
 from google import genai
 from dotenv import load_dotenv
 from docx import Document
+from werkzeug.utils import secure_filename
 import os
 import json
 
-# ENV жүктеу
 load_dotenv()
 
 app = Flask(__name__)
 
-# ===== GOOGLE JSON (ENV арқылы) =====
-google_json = os.getenv("GOOGLE_CREDENTIALS_JSON")
+# ===== ПАПКА =====
+UPLOAD_FOLDER = "uploads"
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
-# файлға жазу
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
+
+# ===== GOOGLE / API =====
+google_json = os.getenv("GOOGLE_CREDENTIALS_JSON")
+if not google_json:
+    raise ValueError("GOOGLE_CREDENTIALS_JSON табылмады")
+
 with open("key.json", "w", encoding="utf-8") as f:
     f.write(google_json)
 
-# жүйеге тіркеу
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "key.json"
 
-# ===== API =====
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+if not GEMINI_API_KEY:
+    raise ValueError("GEMINI_API_KEY табылмады")
 
 vision_client = vision.ImageAnnotatorClient()
 gemini_client = genai.Client(api_key=GEMINI_API_KEY)
-
 
 # ===== OCR =====
 def extract_text_from_image(image_file):
@@ -37,7 +44,6 @@ def extract_text_from_image(image_file):
     if response.full_text_annotation.text:
         return response.full_text_annotation.text
     return "Мәтін табылмады"
-
 
 # ===== ТЕКСЕРУ =====
 def check_with_gemini(student_text, answer_key, max_score):
@@ -53,11 +59,11 @@ def check_with_gemini(student_text, answer_key, max_score):
 
 Максималды ұпай: {max_score}
 
-Тек JSON формат:
+Тек JSON форматында қайтар:
 {{
   "score": сан,
   "decision": "Дұрыс/Жартылай дұрыс/Қате",
-  "feedback": "Қысқаша пікір"
+  "feedback": "Қысқаша қазақша пікір"
 }}
 """
 
@@ -68,16 +74,14 @@ def check_with_gemini(student_text, answer_key, max_score):
 
     text = response.text.strip()
     text = text.replace("```json", "").replace("```", "").strip()
-
     return json.loads(text)
 
-
-# ===== WORD ФАЙЛ =====
+# ===== WORD =====
 def save_to_word(student_text, result, max_score):
     doc = Document()
-    doc.add_heading("БЖБ/ТЖБ тексеру", 0)
+    doc.add_heading("БЖБ тексеру нәтижесі", 0)
 
-    doc.add_heading("Мәтін", level=1)
+    doc.add_heading("Оқушы жауабы", level=1)
     doc.add_paragraph(student_text)
 
     doc.add_heading("Нәтиже", level=1)
@@ -87,10 +91,14 @@ def save_to_word(student_text, result, max_score):
 
     doc.save("result.docx")
 
+# ===== БАСТЫ БЕТ =====
+@app.route("/")
+def home():
+    return render_template("index.html")
 
-# ===== WEB =====
-@app.route("/", methods=["GET", "POST"])
-def index():
+# ===== БЖБ ТЕКСЕРУ =====
+@app.route("/bjb-checker", methods=["GET", "POST"])
+def bjb():
     result = None
     student_text = ""
     error = ""
@@ -108,8 +116,69 @@ def index():
         except Exception as e:
             error = str(e)
 
-    return render_template("index.html", result=result, student_text=student_text, error=error)
+    return render_template(
+        "bjb.html",
+        result=result,
+        student_text=student_text,
+        error=error
+    )
 
+# ===== ОҚУШЫЛАР =====
+@app.route("/students", methods=["GET", "POST"])
+def students():
+    error = ""
+
+    if request.method == "POST":
+        try:
+            name = request.form["student_name"]
+            cls = request.form["class_name"]
+            work = request.form["work_type"]
+            image = request.files["image"]
+
+            filename = secure_filename(image.filename)
+            filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+            image.save(filepath)
+
+            with open(filepath + ".txt", "w", encoding="utf-8") as f:
+                f.write(f"{name} | {cls} | {work}")
+
+            return redirect(url_for("success"))
+
+        except Exception as e:
+            error = str(e)
+
+    return render_template("students.html", error=error)
+
+# ===== SUCCESS =====
+@app.route("/success")
+def success():
+    return render_template("success.html")
+
+# ===== МҰҒАЛІМ =====
+@app.route("/teacher")
+def teacher():
+    files = []
+
+    for filename in os.listdir(UPLOAD_FOLDER):
+        if filename.endswith((".png", ".jpg", ".jpeg")):
+            info = ""
+            txt_path = os.path.join(UPLOAD_FOLDER, filename + ".txt")
+
+            if os.path.exists(txt_path):
+                with open(txt_path, "r", encoding="utf-8") as f:
+                    info = f.read()
+
+            files.append({
+                "filename": filename,
+                "info": info
+            })
+
+    return render_template("teacher.html", files=files)
+
+# ===== UPLOAD ФАЙЛДАР =====
+@app.route("/uploads/<filename>")
+def uploaded_file(filename):
+    return send_from_directory(UPLOAD_FOLDER, filename)
 
 # ===== RUN =====
 if __name__ == "__main__":

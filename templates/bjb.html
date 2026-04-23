@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+  <meta charset="UTF-8">
+  <title>БЖБ/ТЖБ тексеру</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='bjb.css') }}">
+</head>
+<body>
+
+<div class="container">
+
+  <div class="card">
+
+    <h1>📘 БЖБ/ТЖБ тексеру жүйесі</h1>
+    <p class="subtitle">Оқушы жұмысын жүктеп, автоматты тексеру</p>
+
+ <form action="{{ url_for('check_work') }}" method="POST" enctype="multipart/form-data">
+    <input type="file" name="image" required>
+    <textarea name="answer_key" placeholder="Дұрыс жауап"></textarea>
+    <input type="number" name="max_score" placeholder="Максималды ұпай" required>
+    <button type="submit">Тексеру</button>
+</form>
+
+    {% if result %}
+    <div class="result">
+      <h2>📊 Нәтиже</h2>
+      <p><strong>Ұпай:</strong> {{ result.score }}</p>
+      <p><strong>Қорытынды:</strong> {{ result.decision }}</p>
+      <p><strong>Пікір:</strong> {{ result.feedback }}</p>
+    </div>
+    {% endif %}
+
+  </div>
+
+</div>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+
+</body>
+</html>

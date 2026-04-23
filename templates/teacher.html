@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мұғалім панелі</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Мұғалім панелі</h1>
+        <p>Жіберілген жұмыстар</p>
+
+        {% for file in files %}
+        <div class="card">
+           <img src="{{ url_for('uploaded_file', filename=file.filename) }}" alt="Жүктелген сурет">
+            <pre>{{ file.info }}</pre>
+        </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

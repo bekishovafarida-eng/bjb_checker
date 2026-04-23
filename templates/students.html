@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Оқушыларға | Жұмыс жіберу</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='students.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+    <div class="bg-orb orb-3"></div>
+
+    <header class="topbar">
+        <a href="/" class="back-link">← Басты бетке оралу</a>
+    </header>
+
+    <main class="page">
+        <section class="hero-card">
+            <div class="hero-left">
+                <span class="badge">Оқушыларға арналған бөлім</span>
+                <h1>БЖБ/ТЖБ жұмысын <span>оңай жіберіңіз</span></h1>
+                <p>
+                    Бұл бет арқылы оқушы өз жұмысын мұғалімге ыңғайлы түрде жүктей алады.
+                    Аты-жөні, сыныбы және жұмыс түрін толтырып, суретті жіберсе жеткілікті.
+                </p>
+
+                <div class="mini-points">
+                    <div class="mini-box">Жылдам жіберу</div>
+                    <div class="mini-box">Ыңғайлы форма</div>
+                    <div class="mini-box">Әдемі дизайн</div>
+                </div>
+            </div>
+
+            <div class="hero-right">
+                <div class="glass-card">
+                    <h2>Жұмыс жіберу формасы</h2>
+
+                    <form method="POST" enctype="multipart/form-data" class="student-form">
+                        <div class="input-group">
+                            <label for="student_name">Оқушының аты-жөні</label>
+                            <input type="text" id="student_name" name="student_name" placeholder="Мысалы: Айару Қайырбаева" required>
+                        </div>
+
+                        <div class="input-row">
+                            <div class="input-group">
+                                <label for="class_name">Сынып</label>
+                                <input type="text" id="class_name" name="class_name" placeholder="Мысалы: 7A" required>
+                            </div>
+
+                            <div class="input-group">
+                                <label for="work_type">Жұмыс түрі</label>
+                                <select id="work_type" name="work_type" required>
+                                    <option value="БЖБ">БЖБ</option>
+                                    <option value="ТЖБ">ТЖБ</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="image">Сурет жүктеу</label>
+                            <input type="file" id="image" name="image" accept="image/*" required>
+                        </div>
+
+                        <button type="submit" class="submit-btn">Жұмысты жіберу</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+
+</body>
+</html>

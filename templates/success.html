@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сәтті жіберілді</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='students.css') }}">
+</head>
+<body>
+    <main class="page" style="min-height:100vh; display:flex; align-items:center; justify-content:center;">
+        <div class="glass-card" style="max-width:700px; text-align:center;">
+            <span class="badge">Жіберу аяқталды</span>
+            <h2 style="font-size:42px; margin-bottom:14px;">Жұмысыңыз сәтті жіберілді ✅</h2>
+            <p style="font-size:17px; line-height:1.8; color:#7d5f4f; margin-bottom:24px;">
+                Файлыңыз мұғалімге жіберілді. Қайтадан жұмыс жіберу керек болса, төмендегі батырманы басыңыз.
+            </p>
+            <a href="/students" class="submit-btn" style="display:inline-flex; width:auto; padding:0 28px; align-items:center; justify-content:center; text-decoration:none;">
+                Қайта жіберу
+            </a>
+        </div>
+    </main>
+</body>
+</html>
