@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <title>Тест құру</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='test.css') }}">
+    <link rel="manifest" href="/static/manifest.json">
+<meta name="theme-color" content="#c8a27c">
+
+<link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Bilim Space">
+</head>
+<body>
+    <nav>
+       <a href="{{ url_for('home') }}">Басты бет</a>
+    <a href="{{ url_for('bjb') }}">БЖБ</a>
+    <a href="{{ url_for('students') }}">Оқушылар</a>
+    <a href="{{ url_for('teacher') }}">Мұғалім</a>
+    <a href="{{ url_for('essay_create') }}">Эссе құру</a>
+    <a href="{{ url_for('essay_check') }}">Эссе тексеру</a>
+    <a href="{{ url_for('test_create') }}">Тест құру</a>
+    <a href="{{ url_for('test_check') }}">Тест тексеру</a>
+    </nav>
+
+    <div class="test-page">
+        <div class="test-card">
+            <h1>📝 Тест құру</h1>
+            <p class="subtitle">Пән, сынып, сұрақ саны және деңгей бойынша автоматты тест жасау</p>
+
+            <form method="POST">
+                <input type="text" name="subject" placeholder="Пән (мысалы: Информатика)" required>
+                <input type="text" name="grade_level" placeholder="Сынып (мысалы: 7-сынып)" required>
+                <input type="number" name="question_count" placeholder="Сұрақ саны" required>
+
+                <select name="difficulty" required>
+                    <option value="">Деңгейді таңдаңыз</option>
+                    <option value="Жеңіл">Жеңіл</option>
+                    <option value="Орташа">Орташа</option>
+                    <option value="Қиын">Қиын</option>
+                </select>
+
+                <button type="submit">Тест құру</button>
+            </form>
+
+            {% if test_result %}
+            <div class="result-box">
+                <h2>{{ test_result.title }}</h2>
+
+                {% for q in test_result.questions %}
+                <div class="question-block">
+                    <p><strong>{{ q.number }}. {{ q.question }}</strong></p>
+                    <p>A) {{ q.options.A }}</p>
+                    <p>B) {{ q.options.B }}</p>
+                    <p>C) {{ q.options.C }}</p>
+                    <p>D) {{ q.options.D }}</p>
+                </div>
+                {% endfor %}
+
+                <div class="answer-box">
+                    <h3>Дұрыс жауап кілті</h3>
+                    <div class="answer-key">
+                        {% for key, value in test_result.answer_key.items() %}
+                        <span>{{ key }} - {{ value }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if error %}
+            <div class="error-box">
+                <h2>Қате</h2>
+                <p>{{ error }}</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

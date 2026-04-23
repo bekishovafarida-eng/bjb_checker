@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <title>Тест тексеру</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='test.css') }}">
+    <link rel="manifest" href="/static/manifest.json">
+<meta name="theme-color" content="#c8a27c">
+
+<link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Bilim Space">
+</head>
+<body>
+    <nav>
+       <a href="{{ url_for('home') }}">Басты бет</a>
+    <a href="{{ url_for('bjb') }}">БЖБ</a>
+    <a href="{{ url_for('students') }}">Оқушылар</a>
+    <a href="{{ url_for('teacher') }}">Мұғалім</a>
+    <a href="{{ url_for('essay_create') }}">Эссе құру</a>
+    <a href="{{ url_for('essay_check') }}">Эссе тексеру</a>
+    <a href="{{ url_for('test_create') }}">Тест құру</a>
+    <a href="{{ url_for('test_check') }}">Тест тексеру</a>
+    </nav>
+
+    <div class="test-page">
+        <div class="test-card">
+            <h1>✅ Тест тексеру</h1>
+            <p class="subtitle">Тестті мәтін не сурет түрінде жүктеп, оқушы жауаптарын автоматты бағалау</p>
+
+            <form method="POST" enctype="multipart/form-data">
+                <textarea name="test_text" placeholder="Тест мәтінін осында жазыңыз (егер мәтін түрінде болса)"></textarea>
+
+                <div class="or-box">немесе</div>
+
+                <input type="file" name="test_image">
+
+                <textarea name="student_answers" placeholder="Оқушы жауабы: 1A 2B 3C 4D ..." required></textarea>
+
+                <button type="submit">Тестті тексеру</button>
+            </form>
+
+            {% if extracted_test_text %}
+            <div class="result-box">
+                <h2>Танылған тест мәтіні</h2>
+                <pre>{{ extracted_test_text }}</pre>
+            </div>
+            {% endif %}
+
+            {% if extracted_key %}
+            <div class="result-box">
+                <h2>Шығарылған жауап кілті</h2>
+                <div class="answer-key">
+                    {% for key, value in extracted_key.items() %}
+                    <span>{{ key }} - {{ value }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            {% if result %}
+            <div class="result-box">
+                <h2>Нәтиже</h2>
+                <p><strong>Барлығы:</strong> {{ result.total }}</p>
+                <p><strong>Дұрыс:</strong> {{ result.correct }}</p>
+                <p><strong>Қате:</strong> {{ result.wrong }}</p>
+                <p><strong>Пайыз:</strong> {{ result.percent }}%</p>
+
+                <div class="question-block">
+                    <h3>Толық талдау</h3>
+                    {% for item in result.details %}
+                    <div class="detail-row {% if item.is_correct %}ok{% else %}bad{% endif %}">
+                        {{ item.number }}-сұрақ |
+                        оқушы: {{ item.student_answer }} |
+                        дұрыс: {{ item.correct_answer }}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            {% if error %}
+            <div class="error-box">
+                <h2>Қате</h2>
+                <p>{{ error }}</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
