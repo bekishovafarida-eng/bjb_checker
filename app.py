@@ -81,7 +81,7 @@ def check_with_gemini(student_text, answer_key, max_score):
 }}
 """
     response = gemini_client.models.generate_content(
-       model="gemini-1.5-flash",
+       model="gemini-2.0-flash",
         contents=prompt
     )
     return parse_json_response(response.text)
@@ -114,7 +114,7 @@ def generate_essay(topic, grade_level, word_count):
 }}
 """
     response = gemini_client.models.generate_content(
-       model="gemini-1.5-flash",
+       model="gemini-2.0-flash",
         contents=prompt
     )
     return parse_json_response(response.text)
@@ -159,7 +159,7 @@ OCR арқылы танылған эссе мәтіні төменде бері�
 }}
 """
     response = gemini_client.models.generate_content(
-        model="gemini-1.5-flash",
+        model="gemini-2.0-flash",
         contents=prompt
     )
     return parse_json_response(response.text)
@@ -235,7 +235,7 @@ def extract_answer_key_from_test_text(test_text):
 }}
 """
     response = gemini_client.models.generate_content(
-        model="gemini-1.5-flash",
+        model="gemini-2.0-flash",
         contents=prompt
     )
     return parse_json_response(response.text)
