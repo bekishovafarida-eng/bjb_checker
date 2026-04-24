@@ -204,7 +204,7 @@ def generate_test(subject, grade_level, question_count, difficulty):
 }}
 """
     response = gemini_client.models.generate_content(
-       model="gemini-1.5-flash",
+       model="gemini-2.0-flash",
         contents=prompt
     )
     return parse_json_response(response.text)
