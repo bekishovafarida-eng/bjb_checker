@@ -29,17 +29,19 @@
             <h1>✅ Тест тексеру</h1>
             <p class="subtitle">Тестті мәтін не сурет түрінде жүктеп, оқушы жауаптарын автоматты бағалау</p>
 
-            <form method="POST" enctype="multipart/form-data">
-                <textarea name="student_answers" placeholder="Оқушы жауабы: 1A 2B 3C 4D ..."></textarea>
+           <form method="POST" enctype="multipart/form-data">
 
-<div class="or-box">немесе оқушы жауабын суретпен жүктеңіз</div>
+    <!-- Оқушы жауабы текст -->
+    <textarea name="student_answers" placeholder="Оқушы жауабы: 1A 2B 3C 4D ..."></textarea>
 
-<input type="file" name="student_answer_image">
+    <!-- немесе -->
+    <div class="or-box">немесе оқушы жауабын суретпен жүктеңіз</div>
 
-                <textarea name="student_answers" placeholder="Оқушы жауабы: 1A 2B 3C 4D ..." ></textarea>
+    <!-- Оқушы жауабы сурет -->
+    <input type="file" name="student_answer_image">
 
-                <button type="submit">Тестті тексеру</button>
-            </form>
+    <button type="submit">Тестті тексеру</button>
+</form>
 
             {% if extracted_student_answer_text %}
 <div class="result-box">
