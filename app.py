@@ -475,20 +475,26 @@ def test_create():
 def test_check():
     result = None
     extracted_test_text = ""
+    extracted_student_answer_text = ""
     extracted_key = None
     error = ""
 
     if request.method == "POST":
         try:
             test_text = request.form.get("test_text", "").strip()
-            student_answers_raw = request.form["student_answers"]
+            student_answers_raw = request.form.get("student_answers", "").strip()
 
             test_image = request.files.get("test_image")
+            student_answer_image = request.files.get("student_answer_image")
 
             if test_image and test_image.filename:
                 extracted_test_text = extract_text_from_image(test_image)
             else:
                 extracted_test_text = test_text
+
+            if student_answer_image and student_answer_image.filename:
+                extracted_student_answer_text = extract_text_from_image(student_answer_image)
+                student_answers_raw = extracted_student_answer_text
 
             key_data = extract_answer_key_from_test_text(extracted_test_text)
             extracted_key = key_data["answer_key"]
@@ -503,10 +509,10 @@ def test_check():
         "test_check.html",
         result=result,
         extracted_test_text=extracted_test_text,
+        extracted_student_answer_text=extracted_student_answer_text,
         extracted_key=extracted_key,
         error=error
     )
-
 # ===== RUN =====
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))

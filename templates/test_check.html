@@ -30,23 +30,23 @@
             <p class="subtitle">Тестті мәтін не сурет түрінде жүктеп, оқушы жауаптарын автоматты бағалау</p>
 
             <form method="POST" enctype="multipart/form-data">
-                <textarea name="test_text" placeholder="Тест мәтінін осында жазыңыз (егер мәтін түрінде болса)"></textarea>
+                <textarea name="student_answers" placeholder="Оқушы жауабы: 1A 2B 3C 4D ..."></textarea>
 
-                <div class="or-box">немесе</div>
+<div class="or-box">немесе оқушы жауабын суретпен жүктеңіз</div>
 
-                <input type="file" name="test_image">
+<input type="file" name="student_answer_image">
 
-                <textarea name="student_answers" placeholder="Оқушы жауабы: 1A 2B 3C 4D ..." required></textarea>
+                <textarea name="student_answers" placeholder="Оқушы жауабы: 1A 2B 3C 4D ..." ></textarea>
 
                 <button type="submit">Тестті тексеру</button>
             </form>
 
-            {% if extracted_test_text %}
-            <div class="result-box">
-                <h2>Танылған тест мәтіні</h2>
-                <pre>{{ extracted_test_text }}</pre>
-            </div>
-            {% endif %}
+            {% if extracted_student_answer_text %}
+<div class="result-box">
+    <h2>Оқушы жауабынан танылған мәтін</h2>
+    <pre>{{ extracted_student_answer_text }}</pre>
+</div>
+{% endif %}
 
             {% if extracted_key %}
             <div class="result-box">
